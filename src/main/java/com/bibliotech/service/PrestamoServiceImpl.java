@@ -48,7 +48,23 @@ public class PrestamoServiceImpl implements PrestamoService {
 
     @Override
     public void registrarDevolucion(int prestamoId, int socioId) throws BibliotecaException {
-        throw new UnsupportedOperationException("Implementar en Issue #12");
+        Prestamo prestamo = prestamoRepository.buscarPorId(prestamoId)
+                .orElseThrow(() -> new BibliotecaException("Prestamo no encontrado: " + prestamoId));
+
+        Socio socio = socioRepository.buscarPorId(socioId)
+                .orElseThrow(() -> new SocioNoEncontradoException(socioId));
+
+        LocalDate hoy = LocalDate.now();
+        Prestamo prestamoDevuelto = prestamo.conDevolucion(hoy);
+        prestamoRepository.guardar(prestamoDevuelto);
+        socio.devolverPrestamo(prestamo.isbn());
+
+        long diasRetraso = java.time.temporal.ChronoUnit.DAYS.between(
+                prestamo.fechaDevolucionEsperada(), hoy);
+
+        if (diasRetraso > 0) {
+            System.out.println("⚠ Devolucion con " + diasRetraso + " dia(s) de retraso.");
+        }
     }
 
     @Override

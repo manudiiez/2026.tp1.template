@@ -23,17 +23,17 @@ public class RecursoServiceImpl implements RecursoService {
 
     @Override
     public List<Recurso> buscarPorTitulo(String titulo) {
-        throw new UnsupportedOperationException("Implementar en Issue #9");
+        return recursoRepository.buscarPorTitulo(titulo);
     }
 
     @Override
     public List<Recurso> buscarPorAutor(String autor) {
-        throw new UnsupportedOperationException("Implementar en Issue #9");
+        return recursoRepository.buscarPorAutor(autor);
     }
 
     @Override
     public List<Recurso> buscarPorCategoria(CategoriaLibro categoria) {
-        throw new UnsupportedOperationException("Implementar en Issue #9");
+        return recursoRepository.buscarPorCategoria(categoria);
     }
 
     @Override

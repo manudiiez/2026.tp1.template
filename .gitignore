@@ -28,3 +28,6 @@ replay_pid*
 GUIA.md
 .claude
 Dudas.md
+
+# Tests locales (no forman parte del entregable)
+src/test/

@@ -44,6 +44,13 @@ public class PrestamoServiceImpl implements PrestamoService {
         Prestamo prestamo = Prestamo.nuevo(idCounter.getAndIncrement(), socioId, isbn, LocalDate.now());
         prestamoRepository.guardar(prestamo);
         socio.agregarPrestamo(isbn);
+
+        // Marcar libro fisico como no disponible
+        if (recurso instanceof LibroFisico libro) {
+            recursoRepository.guardar(new LibroFisico(
+                libro.isbn(), libro.titulo(), libro.autor(), libro.anio(), libro.categoria(), false
+            ));
+        }
     }
 
     @Override
@@ -58,6 +65,15 @@ public class PrestamoServiceImpl implements PrestamoService {
         Prestamo prestamoDevuelto = prestamo.conDevolucion(hoy);
         prestamoRepository.guardar(prestamoDevuelto);
         socio.devolverPrestamo(prestamo.isbn());
+
+        // Restaurar disponibilidad del libro fisico
+        recursoRepository.buscarPorId(prestamo.isbn()).ifPresent(r -> {
+            if (r instanceof LibroFisico libro) {
+                recursoRepository.guardar(new LibroFisico(
+                    libro.isbn(), libro.titulo(), libro.autor(), libro.anio(), libro.categoria(), true
+                ));
+            }
+        });
 
         long diasRetraso = java.time.temporal.ChronoUnit.DAYS.between(
                 prestamo.fechaDevolucionEsperada(), hoy);
